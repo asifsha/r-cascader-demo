@@ -30,7 +30,7 @@ export function PickerCascader(props) {
 
   //const [originalData, setOriginalData] = useState(props.data);
 
-  const [data, setData] = useState(props.data);
+  const [displayList, setDisplayList] = useState(props.data);
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
@@ -39,19 +39,20 @@ export function PickerCascader(props) {
   const [clickedItem, setClickedItem] = useState({});
 
   const [children, setChildren] = useState([]);
-  //const [expandedItems, setExpandedItems] = useState(props.data);
+
+  const [historyItems, setHistoryItems] = useState([]);
 
   const selectedKeys = [];
 
   const togglePicker = () => {
     if (isPickerOpen) {
+      setChildren([]);
+      setClickedItem({});
+      setDisplayList(props.data);
+      setHistoryItems([]);
     }
     setIsPickerOpen(!isPickerOpen);
     setShowList(!showList);
-
-    //setData((originalData));
-    //console.log(originalData);
-    //setExpandedItems(originalData);
   };
 
   const processData = source => {
@@ -65,16 +66,6 @@ export function PickerCascader(props) {
       if (obj.children !== undefined) addLevel(obj.children, level + 1);
     });
   };
-
-  //   const getLevel1 = originalData=>{
-  //     let arr=[];
-  //     originalData.foreach( d =>{
-  // arr.push({key : d.key, text: d.text, hasChild: d.children !==undefined && d.children.length > 0});
-
-  //     } );
-
-  // return arr;
-  //   };
 
   const renderItems = data => {
     return data.map((item, i) => {
@@ -115,18 +106,19 @@ export function PickerCascader(props) {
       if (props.onItemSelectd !== undefined) {
         props.onItemSelectd({ key: item.key, text: item.text });
       }
+      togglePicker();
       return;
     }
-    if (clickedItem === undefined) {
-      search(data, item.key, true);
-      setClickedItem(item);
-    } else {
-      search(data, clickedItem.key, false);
-      search(data, item.key, true);
-      setClickedItem(item);
-    }
-    setChildren([...children, item]);
+    setDisplayList(item.children);
+    setClickedItem(item);
+    let h={ dispalyList : displayList.slice() , key: item.key, text: item.text }
 
+    setHistoryItems([...historyItems, h]);
+
+    console.log('set history');
+    console.log(historyItems);
+    console.log(h);
+    console.log([...historyItems, h]);
     //let result = deepSearch(expandedItems, 'key', (k, t => t.selected === true ));
     //let e= expandedItems[0].children[1].children[2];
 
@@ -134,6 +126,31 @@ export function PickerCascader(props) {
     // {
     //   if(selectedKeys.f)
     // }
+  };
+
+  const onHistoryItemClicked = historyItem => {
+    setDisplayList(historyItem.dispalyList.slice());
+
+    setClickedItem(historyItem);
+    let lastHistory = historyItems;
+    let pIndex = findIndexByKey(lastHistory, historyItem.key);
+
+    //let pItem = lastHistory[pIndex];
+
+    lastHistory.length = pIndex;
+    console.log('history');
+    console.log(lastHistory);
+    setHistoryItems(lastHistory);
+  };
+
+  const findIndexByKey = (data, key) => {
+    //let index = 0;
+    // for (index = 0; index < data.length; index++) {
+    //   if (data[index].key == key) {
+    //     return index;
+    //   }
+    // }
+    return data.findIndex(x=> x.key == key);
   };
 
   const search = (data, key, selected) => {
@@ -151,35 +168,55 @@ export function PickerCascader(props) {
 
   const renderItems1 = () => {
     console.log("render1");
-    console.log(data);
-    if (data === undefined || data.length === 0) return null;
-    const listItems = data.map((item, i) => {
+    //console.log(data);
+    if (displayList === undefined || displayList.length === 0) return null;
+    const listItems = displayList.map((item, i) => {
+      console.log(i);
       return (
-        <div className="rc-list-card" style={{display:'flex'}}>
-          
-            <li
-              key={i}
-              value={item.key}
-              style={{ verticalAlign: "middle" }}
-              onClick={() => {
-                onItemClicked(item);
-              }}
-            >
-              {item.text} {item.children !== null ? <FaCaretRight /> : null}
-            </li>
-          
+        <div className="rc-list-card" style={{ display: "flex" }}>
+          <li
+            key={i}
+            value={item.key}
+            style={{ verticalAlign: "middle" }}
+            onClick={() => {
+              onItemClicked(item);
+            }}
+          >
+            {item.text} {item.children !== undefined ? <FaCaretRight /> : null}
+          </li>
         </div>
       );
     });
     return (
-      <div style={{display:'flex'}}>
+      <div style={{ display: "flex", flexDirection : "row" }}>
         <div>
           <ul>{listItems}</ul>
         </div>
-        <div style={{ backgroundColor: "green", display:'flex' }}>
-          <div>test 222</div>
-          {renderChildItems1()}
-        </div>
+        <div>{renderHistoryItems()}</div>
+      </div>
+    );
+  };
+
+  const renderHistoryItems = () => {
+    return (
+      <div>
+        <ul>
+          {historyItems.map((item, i) => {
+            return (
+              <li
+                key={i}
+                value={item.key}
+                style={{ verticalAlign: "middle" }}
+                onClick={() => {
+                  onHistoryItemClicked(item);
+                }}
+              >
+                {item.text}{" "}
+                {i !== historyItems.length - 1 ? <FaCaretRight /> : null}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     );
   };
@@ -206,9 +243,8 @@ export function PickerCascader(props) {
                     onItemClicked(ch);
                   }}
                 >
-
-                  {ch.text} {ch.children !== null ? <FaCaretRight /> : null}
-                  
+                  {ch.text}{" "}
+                  {ch.children !== undefined ? <FaCaretRight /> : null}
                 </li>
               );
             })}
@@ -218,13 +254,13 @@ export function PickerCascader(props) {
     });
     console.log(childItems);
     console.log("render child items");
-    return <div style={{display:'flex'}}>{childItems}</div>;
+    return <div style={{ display: "flex" }}>{childItems}</div>;
   };
 
   useEffect(() => {}, []);
 
   return (
-    <div className="rc-wrapper">
+    <div style={styles.wrapper}>
       <div className="rc-textbox" onClick={() => togglePicker()}>
         {props.placeHolder}
         <span
@@ -233,17 +269,22 @@ export function PickerCascader(props) {
           {showList ? <FaCaretUp /> : <FaCaretDown />}
         </span>
       </div>
-      <div
-        className="rc-list"
-        style={{
-          display: "flex",
-          zIndex: 10,
-          position: "absolute",
-          backgroundColor: "orange"
-        }}
-      >
-        {showList && renderItems1(data)}
+      <div className="rc-list" style={styles.list}>
+        {showList && renderItems1(displayList)}
       </div>
     </div>
   );
 }
+
+const styles = {
+  wrapper: {
+    width: "200px"
+  },
+  list: {
+    border: "1px red solid;",
+    display: "flex",
+    zIndex: 10,
+    position: "absolute",
+    backgroundColor: "orange"
+  }
+};
