@@ -34,7 +34,7 @@ export function PickerCascader(props) {
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  const [selectedItem, setSelectedItem] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(undefined);
 
   const [clickedItem, setClickedItem] = useState({});
 
@@ -103,19 +103,25 @@ export function PickerCascader(props) {
       item.children === null ||
       item.children.length === 0
     ) {
+      let selItem={ key: item.key, text: item.text };
       if (props.onItemSelectd !== undefined) {
-        props.onItemSelectd({ key: item.key, text: item.text });
+        props.onItemSelectd(selItem);
       }
+      setSelectedItem(selItem);
       togglePicker();
       return;
     }
     setDisplayList(item.children);
     setClickedItem(item);
-    let h={ dispalyList : displayList.slice() , key: item.key, text: item.text }
+    let h = {
+      dispalyList: displayList.slice(),
+      key: item.key,
+      text: item.text
+    };
 
     setHistoryItems([...historyItems, h]);
 
-    console.log('set history');
+    console.log("set history");
     console.log(historyItems);
     console.log(h);
     console.log([...historyItems, h]);
@@ -138,7 +144,7 @@ export function PickerCascader(props) {
     //let pItem = lastHistory[pIndex];
 
     lastHistory.length = pIndex;
-    console.log('history');
+    console.log("history");
     console.log(lastHistory);
     setHistoryItems(lastHistory);
   };
@@ -150,7 +156,7 @@ export function PickerCascader(props) {
     //     return index;
     //   }
     // }
-    return data.findIndex(x=> x.key == key);
+    return data.findIndex(x => x.key == key);
   };
 
   const search = (data, key, selected) => {
@@ -174,7 +180,7 @@ export function PickerCascader(props) {
       console.log(i);
       return (
         <div className="rc-list-card" style={{ display: "flex" }}>
-          <li
+          <div
             key={i}
             value={item.key}
             style={{ verticalAlign: "middle" }}
@@ -183,15 +189,14 @@ export function PickerCascader(props) {
             }}
           >
             {item.text} {item.children !== undefined ? <FaCaretRight /> : null}
-          </li>
+          </div>
         </div>
       );
     });
     return (
-      <div style={{ display: "flex", flexDirection : "row" }}>
-        <div>
-          <ul>{listItems}</ul>
-        </div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div>{listItems}</div>
+        <br />
         <div>{renderHistoryItems()}</div>
       </div>
     );
@@ -199,24 +204,22 @@ export function PickerCascader(props) {
 
   const renderHistoryItems = () => {
     return (
-      <div>
-        <ul>
-          {historyItems.map((item, i) => {
-            return (
-              <li
-                key={i}
-                value={item.key}
-                style={{ verticalAlign: "middle" }}
-                onClick={() => {
-                  onHistoryItemClicked(item);
-                }}
-              >
-                {item.text}{" "}
-                {i !== historyItems.length - 1 ? <FaCaretRight /> : null}
-              </li>
-            );
-          })}
-        </ul>
+      <div style={{display:'flex'}}>
+        {historyItems.map((item, i) => {
+          return (
+            <div
+              key={i}
+              value={item.key}
+              style={styles.historyList}
+              onClick={() => {
+                onHistoryItemClicked(item);
+              }}
+            >
+              {item.text}{" "}
+              {i !== historyItems.length - 1 ? <FaCaretRight /> : null}
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -262,15 +265,27 @@ export function PickerCascader(props) {
   return (
     <div style={styles.wrapper}>
       <div className="rc-textbox" onClick={() => togglePicker()}>
-        {props.placeHolder}
+        {selectedItem !== undefined ? selectedItem.text : props.placeHolder}
         <span
           style={{ verticalAlign: "middle", float: "right", width: "100px" }}
         >
           {showList ? <FaCaretUp /> : <FaCaretDown />}
         </span>
       </div>
-      <div className="rc-list" style={styles.list}>
-        {showList && renderItems1(displayList)}
+      <div>
+        <div></div>
+        {showList && (
+          <div className="rc-list" style={styles.list}>
+            <div style={styles.inputIcons}>
+              <div style={styles.icon}>
+                
+                <FaSearch />{" "}
+              </div>
+              <input style={styles.inputField} type="text" />
+            </div>            
+            {renderItems1(displayList)}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -285,6 +300,24 @@ const styles = {
     display: "flex",
     zIndex: 10,
     position: "absolute",
-    backgroundColor: "orange"
+    display :'flex',
+    flexDirection:'column'
+  },
+  historyList:{
+    verticalAlign: "middle",
+    fontSize:'x-small'
+  },
+  inputIcons: {
+    marginBottom: "10px"
+  },
+  icon: {
+    padding: "10px",
+    minWidth: "40px",
+    position: 'absolute'
+  },
+  inputField: {
+    
+    padding: "10px",
+    textAlign: "center"
   }
 };
