@@ -313,11 +313,12 @@ const styles = {
   icon: {
     padding: "10px",
     minWidth: "40px",
-    position: 'absolute'
+    position: 'absolute',
+    color:'grey',
   },
-  inputField: {
-    
+  inputField: {    
     padding: "10px",
-    textAlign: "center"
+    
+    paddingLeft:'30px'
   }
 };
