@@ -36,17 +36,22 @@ export function PickerCascader(props) {
 
   const [selectedItem, setSelectedItem] = useState(undefined);
 
-  const [clickedItem, setClickedItem] = useState({});
+  const [selectedItems, setSelectedItems] = useState([]);
 
-  const [children, setChildren] = useState([]);
+  const [clickedItem, setClickedItem] = useState({});
 
   const [historyItems, setHistoryItems] = useState([]);
 
-  const selectedKeys = [];
+  const [searchValue, setSearchValue] = useState("");
+
+  const [transformData, setTransformData] = useState([]);
+
+  const [searchData, setSearchData] = useState([]);
+
+  const [filterData, setFilterData] = useState([]);
 
   const togglePicker = () => {
     if (isPickerOpen) {
-      setChildren([]);
       setClickedItem({});
       setDisplayList(props.data);
       setHistoryItems([]);
@@ -55,44 +60,23 @@ export function PickerCascader(props) {
     setShowList(!showList);
   };
 
-  const processData = source => {
-    addLevel(source);
-    return source;
-  };
-
-  const addLevel = (arr, level = 0) => {
-    arr.forEach(obj => {
-      obj.level = level;
-      if (obj.children !== undefined) addLevel(obj.children, level + 1);
-    });
-  };
-
-  const renderItems = data => {
-    return data.map((item, i) => {
-      return (
-        <ul
-          key={i}
-          value={item.key}
-          style={{ verticalAlign: "middle" }}
-          onClick={() => {
-            setClickedItem(item);
-          }}
-        >
-          {item.text} {item.children !== null ? <FaCaretRight /> : null}
-        </ul>
-      );
-    });
-  };
-
-  const renderChildItems = item => {
-    if (item === undefined || item.children === undefined) return null;
-    return item.children.map((child, i) => {
-      return (
-        <ul key={i} value={child.key} style={{ verticalAlign: "middle" }}>
-          {child.text} {child.children !== null ? <FaCaretRight /> : null}
-        </ul>
-      );
-    });
+  const createSearchData = (searchData, data, key, text) => {
+    let index = 0;
+    for (index = 0; index < data.length; index++) {
+      let d = data[index];
+      if (d.children !== undefined)
+        createSearchData(
+          searchData,
+          d.children,
+          key + d.key + "~",
+          text + d.text + " | "
+        );
+      else {
+        let k = key + d.key;
+        let t = text + d.text;
+        searchData.push({ key: k, text: t });
+      }
+    }
   };
 
   const onItemClicked = item => {
@@ -103,21 +87,36 @@ export function PickerCascader(props) {
       item.children === null ||
       item.children.length === 0
     ) {
-      let selItem={ key: item.key, text: item.text };
-      if (props.onItemSelectd !== undefined) {
-        props.onItemSelectd(selItem);
+      let index = 0;
+      let t = "",
+        k = "";
+
+      for (index = 0; index < selectedItems.length; index++) {
+        t = t + selectedItems[index].text + " | ";
+        k = k + selectedItems[index].key + "~";
       }
-      setSelectedItem(selItem);
+      let si = { text: "", key: "" };
+      si.text = t + item.text;
+      si.key = k + item.key;
+
+      if (props.onValueSelected !== undefined) {
+        props.onValueSelected(si);
+      }
+      setSelectedItem(si);
       togglePicker();
       return;
     }
     setDisplayList(item.children);
     setClickedItem(item);
+    var lastselectedItems = selectedItems.slice();
     let h = {
+      selectedItems: selectedItems.slice(),
       dispalyList: displayList.slice(),
       key: item.key,
       text: item.text
     };
+    lastselectedItems.push(item);
+    setSelectedItems(lastselectedItems.slice());
 
     setHistoryItems([...historyItems, h]);
 
@@ -174,7 +173,41 @@ export function PickerCascader(props) {
 
   const renderItems1 = () => {
     console.log("render1");
-    //console.log(data);
+    return (
+      <div>
+        {(searchValue === undefined || searchValue === "") && renderDataItems()}
+        {searchValue !== "" && renderSearchItems()}
+      </div>
+    );
+  };
+
+  const renderSearchItems = () => {
+    console.log("render search");
+    if (searchValue === undefined) return null;
+    console.log(searchValue);
+    console.log(searchData);
+    console.log(filterData);
+    const searcItems = filterData.map((item, i) => {
+      console.log(i);
+      return (
+        <div className="rc-list-card" style={{ display: "flex" }}>
+          <div
+            key={i}
+            value={item.key}
+            style={{ verticalAlign: "middle" }}
+            onClick={() => {
+              onSearchItemClicked(item);
+            }}
+          >
+            {item.text}
+          </div>
+        </div>
+      );
+    });
+    return <div>{searcItems}</div>;
+  };
+
+  const renderDataItems = () => {
     if (displayList === undefined || displayList.length === 0) return null;
     const listItems = displayList.map((item, i) => {
       console.log(i);
@@ -204,7 +237,7 @@ export function PickerCascader(props) {
 
   const renderHistoryItems = () => {
     return (
-      <div style={{display:'flex'}}>
+      <div style={{ display: "flex" }}>
         {historyItems.map((item, i) => {
           return (
             <div
@@ -224,43 +257,40 @@ export function PickerCascader(props) {
     );
   };
 
-  const renderChildItems1 = () => {
-    console.log(children);
-    if (children.length === 0) return null;
-    console.log("render child121");
-    const childItems = children.map((child, i) => {
-      console.log("first child");
-      console.log(child);
-      return (
-        <div>
-          <ul>
-            {child.children.map((ch, i) => {
-              console.log("second child");
-              console.log(ch);
-              return (
-                <li
-                  key={i}
-                  value={ch.key}
-                  style={{ verticalAlign: "middle" }}
-                  onClick={() => {
-                    onItemClicked(ch);
-                  }}
-                >
-                  {ch.text}{" "}
-                  {ch.children !== undefined ? <FaCaretRight /> : null}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      );
-    });
-    console.log(childItems);
-    console.log("render child items");
-    return <div style={{ display: "flex" }}>{childItems}</div>;
+  useEffect(() => {
+    let td = [];
+    createSearchData(td, props.data, "", "");
+    setTransformData(td.slice());
+    setSearchData(td.slice());
+    console.log(td);
+  }, []);
+
+  const onSearchItemClicked = item => {
+    let si = { text: "", key: "" };
+    si.text = item.text;
+    si.key = item.key;
+    setSelectedItem(si);
+    togglePicker();
+    if (props.onValueSelected != null) {
+      props.onValueSelected(si);
+    }
   };
 
-  useEffect(() => {}, []);
+  const handleSearch = event => {
+    //console.log("A name was submitted: " + event);
+    //console.log(event);
+    let searchString = event.target.value;
+    setSearchValue(searchString);
+    console.log(searchValue);
+    event.preventDefault();
+    let sd = searchData.slice();
+    sd = sd.filter(arr => {
+      return arr.text.toLowerCase().includes(searchString.toLowerCase());
+    });
+
+    setFilterData(sd);
+    console.log(sd);
+  };
 
   return (
     <div style={styles.wrapper}>
@@ -278,11 +308,15 @@ export function PickerCascader(props) {
           <div className="rc-list" style={styles.list}>
             <div style={styles.inputIcons}>
               <div style={styles.icon}>
-                
                 <FaSearch />{" "}
               </div>
-              <input style={styles.inputField} type="text" />
-            </div>            
+              <input
+                style={styles.inputField}
+                type="text"
+                value={searchValue}
+                onChange={evt => handleSearch(evt)}
+              />
+            </div>
             {renderItems1(displayList)}
           </div>
         )}
@@ -296,16 +330,15 @@ const styles = {
     width: "200px"
   },
   list: {
-    border: "1px red solid;",
+    border: "1px red solid",
     display: "flex",
     zIndex: 10,
     position: "absolute",
-    display :'flex',
-    flexDirection:'column'
+    flexDirection: "column"
   },
-  historyList:{
+  historyList: {
     verticalAlign: "middle",
-    fontSize:'x-small'
+    fontSize: "x-small"
   },
   inputIcons: {
     marginBottom: "10px"
@@ -313,12 +346,12 @@ const styles = {
   icon: {
     padding: "10px",
     minWidth: "40px",
-    position: 'absolute',
-    color:'grey',
+    position: "absolute",
+    color: "grey"
   },
-  inputField: {    
+  inputField: {
     padding: "10px",
-    
-    paddingLeft:'30px'
+
+    paddingLeft: "30px"
   }
 };

@@ -124,7 +124,7 @@ function App() {
             ]
           }
         ]}
-        onValueSelect={item => this.setCountry(item)}
+        onValueSelected={item => setCountry(item)}
       />
       <div>text show behind the card</div>
       <div className="wrapper">
