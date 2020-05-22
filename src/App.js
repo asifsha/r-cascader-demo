@@ -55,6 +55,7 @@ function App() {
   return (
     <div>
       <PickerCascader
+       style={{width:'15rem'}}
         placeHolder="City"
         data={[
           {

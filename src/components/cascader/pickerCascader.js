@@ -1,22 +1,41 @@
 import React, { useState, useEffect } from "react";
-import Modal from "react-modal";
 import { FaCaretDown, FaCaretRight, FaCaretUp, FaSearch } from "react-icons/fa";
-import FontAwesome from "react-fontawesome";
 
 import "./pickerCascader.css";
 
-const customStyles = {
-  content: {
-    top: "10%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)"
-  }
-};
-
 export function PickerCascader(props) {
+  const styles = {
+    list: {
+      border: "1px red solid",
+      display: "flex",
+      zIndex: 10,
+      position: "absolute",
+      flexDirection: "column",
+      width: props.style.width
+    },
+    historyList: {
+      verticalAlign: "middle",
+      fontSize: "x-small"
+    },
+    searchContainer: {
+      marginBottom: "1rem",      
+    },    
+    icon: {
+      padding: "0.5rem",
+      minWidth: "2rem",
+      position: "absolute",
+      color: "grey"
+    },
+    inputField: {
+      width: "calc(100% - 2.8rem)",
+      padding: "0.5rem",
+      paddingLeft: "2rem"
+    },
+    dropdownIcon: {
+      verticalAlign: "middle",
+      float: "right"
+    }
+  };
   //const [selectedValue, setSelectedValue] = useState([]);
   //const [modalIsOpen, setModalIsOpen] = useState(false);
   console.log(props);
@@ -293,29 +312,27 @@ export function PickerCascader(props) {
   };
 
   return (
-    <div style={styles.wrapper}>
+    <div style={props.style}>
       <div className="rc-textbox" onClick={() => togglePicker()}>
         {selectedItem !== undefined ? selectedItem.text : props.placeHolder}
-        <span
-          style={{ verticalAlign: "middle", float: "right", width: "100px" }}
-        >
+        <span style={styles.dropdownIcon}>
           {showList ? <FaCaretUp /> : <FaCaretDown />}
         </span>
       </div>
       <div>
         <div></div>
         {showList && (
-          <div className="rc-list" style={styles.list}>
-            <div style={styles.inputIcons}>
+          <div style={styles.list}>
+            <div style={styles.searchContainer}>
               <div style={styles.icon}>
                 <FaSearch />{" "}
-              </div>
-              <input
-                style={styles.inputField}
-                type="text"
-                value={searchValue}
-                onChange={evt => handleSearch(evt)}
-              />
+              </div>              
+                <input
+                  style={styles.inputField}
+                  type="text"
+                  value={searchValue}
+                  onChange={evt => handleSearch(evt)}
+                />              
             </div>
             {renderItems1(displayList)}
           </div>
@@ -325,33 +342,8 @@ export function PickerCascader(props) {
   );
 }
 
-const styles = {
-  wrapper: {
-    width: "200px"
-  },
-  list: {
-    border: "1px red solid",
-    display: "flex",
-    zIndex: 10,
-    position: "absolute",
-    flexDirection: "column"
-  },
-  historyList: {
-    verticalAlign: "middle",
-    fontSize: "x-small"
-  },
-  inputIcons: {
-    marginBottom: "10px"
-  },
-  icon: {
-    padding: "10px",
-    minWidth: "40px",
-    position: "absolute",
-    color: "grey"
-  },
-  inputField: {
-    padding: "10px",
-
-    paddingLeft: "30px"
+PickerCascader.defaultProps = {
+  style: {
+    width: "20rem"
   }
 };
