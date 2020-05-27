@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FaCaretDown, FaCaretRight, FaCaretUp, FaSearch } from "react-icons/fa";
 
-
-
 export function PickerCascader(props) {
   const styles = {
-    listWrapper:{
-      position:"relative"
+    listWrapper: {
+      position: "relative"
     },
 
     list: {
@@ -15,15 +13,15 @@ export function PickerCascader(props) {
       zIndex: 10,
       position: "absolute",
       flexDirection: "column",
-      width: props.style.width,      
+      width: props.style.width
     },
     historyList: {
       verticalAlign: "middle",
       fontSize: "x-small"
     },
     searchContainer: {
-      marginBottom: "1rem",      
-    },    
+      marginBottom: "1rem"
+    },
     icon: {
       padding: "0.5rem",
       minWidth: "2rem",
@@ -34,14 +32,12 @@ export function PickerCascader(props) {
       width: "calc(100% - 2.8rem)",
       padding: "0.5rem",
       paddingLeft: "2rem"
-
     },
     dropdownIcon: {
       verticalAlign: "middle",
       float: "right"
     }
   };
-  
 
   const [showList, setShowList] = useState(false);
 
@@ -53,21 +49,19 @@ export function PickerCascader(props) {
 
   const [selectedItems, setSelectedItems] = useState([]);
 
-  
   const [historyItems, setHistoryItems] = useState([]);
 
-  const [searchValue, setSearchValue] = useState("");  
+  const [searchValue, setSearchValue] = useState("");
 
   const [searchData, setSearchData] = useState([]);
 
   const [filterData, setFilterData] = useState([]);
 
   const togglePicker = () => {
-    if (isPickerOpen) {      
+    if (isPickerOpen) {
       setDisplayList(props.data);
-      setHistoryItems([]);      
-    }
-    else{      
+      setHistoryItems([]);
+    } else {
       setSelectedItems([]);
     }
     setIsPickerOpen(!isPickerOpen);
@@ -93,7 +87,7 @@ export function PickerCascader(props) {
     }
   };
 
-  const onItemClicked = item => {    
+  const onItemClicked = item => {
     if (
       item.children === undefined ||
       item.children === null ||
@@ -131,27 +125,25 @@ export function PickerCascader(props) {
     setSelectedItems(lastselectedItems.slice());
 
     setHistoryItems([...historyItems, h]);
-   
   };
 
   const onHistoryItemClicked = historyItem => {
     setDisplayList(historyItem.dispalyList.slice());
 
-    
     let lastHistory = historyItems;
-    let pIndex = findIndexByKey(lastHistory, historyItem.key);   
+    let pIndex = findIndexByKey(lastHistory, historyItem.key);
 
     lastHistory.length = pIndex;
-   
+
+    setSelectedItems(historyItem.selectedItems);
     setHistoryItems(lastHistory);
   };
 
-  const findIndexByKey = (data, key) => {    
+  const findIndexByKey = (data, key) => {
     return data.findIndex(x => x.key === key);
-  };  
+  };
 
-  
-  const renderItems = () => {    
+  const renderItems = () => {
     return (
       <div>
         {(searchValue === undefined || searchValue === "") && renderDataItems()}
@@ -160,11 +152,11 @@ export function PickerCascader(props) {
     );
   };
 
-  const renderSearchItems = () => {    
-    if (searchValue === undefined) return null;   
-    const searcItems = filterData.map((item, i) => {      
+  const renderSearchItems = () => {
+    if (searchValue === undefined) return null;
+    const searcItems = filterData.map((item, i) => {
       return (
-        <div className="rc-list-card" style={{ display: "flex" }}>
+        <div className="rc-list-card" style={{ display: "flex" }} key={i}>
           <div
             key={i}
             value={item.key}
@@ -183,9 +175,9 @@ export function PickerCascader(props) {
 
   const renderDataItems = () => {
     if (displayList === undefined || displayList.length === 0) return null;
-    const listItems = displayList.map((item, i) => {      
+    const listItems = displayList.map((item, i) => {
       return (
-        <div className="rc-list-card" style={{ display: "flex" }}>
+        <div className="rc-list-card" style={{ display: "flex" }} key={i}>
           <div
             key={i}
             value={item.key}
@@ -232,8 +224,8 @@ export function PickerCascader(props) {
 
   useEffect(() => {
     let td = [];
-    createSearchData(td, props.data, "", "");    
-    setSearchData(td.slice());    
+    createSearchData(td, props.data, "", "");
+    setSearchData(td.slice());
   }, []);
 
   const onSearchItemClicked = item => {
@@ -247,16 +239,16 @@ export function PickerCascader(props) {
     }
   };
 
-  const handleSearch = event => {    
+  const handleSearch = event => {
     let searchString = event.target.value;
-    setSearchValue(searchString);    
+    setSearchValue(searchString);
     event.preventDefault();
     let sd = searchData.slice();
     sd = sd.filter(arr => {
       return arr.text.toLowerCase().includes(searchString.toLowerCase());
     });
 
-    setFilterData(sd);    
+    setFilterData(sd);
   };
 
   return (
@@ -267,19 +259,19 @@ export function PickerCascader(props) {
           {showList ? <FaCaretUp /> : <FaCaretDown />}
         </span>
       </div>
-      <div style={styles.listWrapper}>       
+      <div style={styles.listWrapper}>
         {showList && (
           <div style={styles.list}>
             <div style={styles.searchContainer}>
               <div style={styles.icon}>
                 <FaSearch />{" "}
-              </div>              
-                <input
-                  style={styles.searchField}
-                  type="text"
-                  value={searchValue}
-                  onChange={evt => handleSearch(evt)}
-                />              
+              </div>
+              <input
+                style={styles.searchField}
+                type="text"
+                value={searchValue}
+                onChange={evt => handleSearch(evt)}
+              />
             </div>
             {renderItems(displayList)}
           </div>

@@ -13,10 +13,8 @@ function App() {
 
   return (
     
-    <div>
-      <div>Cities</div>
-      <div>Cities</div>
-      <div>Cities</div>
+    <div style={{padding:'2rem'}}>
+      <div>Cities</div>      
       <div style={{float:'left', paddingRight : '1rem'}}>Select City : </div>
       <div style={{display:'inline'}}><PickerCascader
        style={{width:'15rem'}}
@@ -92,10 +90,7 @@ function App() {
         onValueSelected={item => console.log(item)}
       /></div>
       
-      <div>text show behind the card</div>
-      <div className="wrapper">
-        
-      </div>
+      
     </div>
   );
 }
