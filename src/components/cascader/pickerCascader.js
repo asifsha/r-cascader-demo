@@ -6,12 +6,13 @@ import "./pickerCascader.css";
 export function PickerCascader(props) {
   const styles = {
     list: {
-      border: "1px red solid",
+      border: "1px grey solid",
       display: "flex",
       zIndex: 10,
       position: "absolute",
       flexDirection: "column",
-      width: props.style.width
+      width: props.style.width,
+      top:'1.5rem',
     },
     historyList: {
       verticalAlign: "middle",
@@ -26,10 +27,11 @@ export function PickerCascader(props) {
       position: "absolute",
       color: "grey"
     },
-    inputField: {
+    searchField: {
       width: "calc(100% - 2.8rem)",
       padding: "0.5rem",
       paddingLeft: "2rem"
+
     },
     dropdownIcon: {
       verticalAlign: "middle",
@@ -73,7 +75,11 @@ export function PickerCascader(props) {
     if (isPickerOpen) {
       setClickedItem({});
       setDisplayList(props.data);
-      setHistoryItems([]);
+      setHistoryItems([]);      
+    }
+    else{
+      setSelectedItem({});
+      setSelectedItems([]);
     }
     setIsPickerOpen(!isPickerOpen);
     setShowList(!showList);
@@ -313,7 +319,7 @@ export function PickerCascader(props) {
 
   return (
     <div style={props.style}>
-      <div className="rc-textbox" onClick={() => togglePicker()}>
+      <div onClick={() => togglePicker()}>
         {selectedItem !== undefined ? selectedItem.text : props.placeHolder}
         <span style={styles.dropdownIcon}>
           {showList ? <FaCaretUp /> : <FaCaretDown />}
@@ -328,7 +334,7 @@ export function PickerCascader(props) {
                 <FaSearch />{" "}
               </div>              
                 <input
-                  style={styles.inputField}
+                  style={styles.searchField}
                   type="text"
                   value={searchValue}
                   onChange={evt => handleSearch(evt)}

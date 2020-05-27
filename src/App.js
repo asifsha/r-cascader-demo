@@ -7,54 +7,15 @@ import PickerCascader from "./components/cascader";
 function App() {
   const [country, setCountry] = useState("");
 
-  const [fruit, setFruit] = useState([
-    {
-      id: 0,
-      title: "Apple",
-      selected: false,
-      key: "fruit"
-    },
-    {
-      id: 1,
-      title: "Orange",
-      selected: false,
-      key: "fruit"
-    },
-    {
-      id: 2,
-      title: "Grape",
-      selected: false,
-      key: "fruit"
-    },
-    {
-      id: 3,
-      title: "Pomegranate",
-      selected: false,
-      key: "fruit"
-    },
-    {
-      id: 4,
-      title: "Strawberry",
-      selected: false,
-      key: "fruit"
-    }
-  ]);
+  
 
-  const resetThenSet = (id, key) => {
-    console.log(id);
-    console.log(key);
-    console.log(JSON.stringify(fruit));
-    let temp = JSON.parse(JSON.stringify(fruit));
-    console.log(temp);
-    temp.forEach(item => (item.selected = false));
-    temp[id].selected = true;
-    setFruit(temp);
-    console.log(temp);
-  };
+  
 
   return (
+    
     <div>
-      <PickerCascader
+      <div style={{float:'left'}}>Select City : </div>
+      <div style={{display:'inline'}}><PickerCascader
        style={{width:'15rem'}}
         placeHolder="City"
         data={[
@@ -125,15 +86,12 @@ function App() {
             ]
           }
         ]}
-        onValueSelected={item => setCountry(item)}
-      />
+        onValueSelected={item => console.log(item)}
+      /></div>
+      
       <div>text show behind the card</div>
       <div className="wrapper">
-        {/* <Dropdown
-            title="Select fruit"
-            list={fruit}
-            resetThenSet={resetThenSet}
-          /> */}
+        
       </div>
     </div>
   );
