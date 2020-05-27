@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { FaCaretDown, FaCaretRight, FaCaretUp, FaSearch } from "react-icons/fa";
 
-import "./pickerCascader.css";
+
 
 export function PickerCascader(props) {
   const styles = {
+    listWrapper:{
+      position:"relative"
+    },
+
     list: {
       border: "1px grey solid",
       display: "flex",
       zIndex: 10,
       position: "absolute",
       flexDirection: "column",
-      width: props.style.width,
-      top:'1.5rem',
+      width: props.style.width,      
     },
     historyList: {
       verticalAlign: "middle",
@@ -38,18 +41,9 @@ export function PickerCascader(props) {
       float: "right"
     }
   };
-  //const [selectedValue, setSelectedValue] = useState([]);
-  //const [modalIsOpen, setModalIsOpen] = useState(false);
-  console.log(props);
-  // const openDropDown = () => {
-  //   setModalIsOpen(true);
-  // };
+  
 
   const [showList, setShowList] = useState(false);
-
-  const [showItem, setShowItem] = useState(false);
-
-  //const [originalData, setOriginalData] = useState(props.data);
 
   const [displayList, setDisplayList] = useState(props.data);
 
@@ -59,26 +53,21 @@ export function PickerCascader(props) {
 
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const [clickedItem, setClickedItem] = useState({});
-
+  
   const [historyItems, setHistoryItems] = useState([]);
 
-  const [searchValue, setSearchValue] = useState("");
-
-  const [transformData, setTransformData] = useState([]);
+  const [searchValue, setSearchValue] = useState("");  
 
   const [searchData, setSearchData] = useState([]);
 
   const [filterData, setFilterData] = useState([]);
 
   const togglePicker = () => {
-    if (isPickerOpen) {
-      setClickedItem({});
+    if (isPickerOpen) {      
       setDisplayList(props.data);
       setHistoryItems([]);      
     }
-    else{
-      setSelectedItem({});
+    else{      
       setSelectedItems([]);
     }
     setIsPickerOpen(!isPickerOpen);
@@ -104,9 +93,7 @@ export function PickerCascader(props) {
     }
   };
 
-  const onItemClicked = item => {
-    console.log("on item clicked");
-    console.log(item);
+  const onItemClicked = item => {    
     if (
       item.children === undefined ||
       item.children === null ||
@@ -132,7 +119,7 @@ export function PickerCascader(props) {
       return;
     }
     setDisplayList(item.children);
-    setClickedItem(item);
+    //setClickedItem(item);
     var lastselectedItems = selectedItems.slice();
     let h = {
       selectedItems: selectedItems.slice(),
@@ -144,60 +131,27 @@ export function PickerCascader(props) {
     setSelectedItems(lastselectedItems.slice());
 
     setHistoryItems([...historyItems, h]);
-
-    console.log("set history");
-    console.log(historyItems);
-    console.log(h);
-    console.log([...historyItems, h]);
-    //let result = deepSearch(expandedItems, 'key', (k, t => t.selected === true ));
-    //let e= expandedItems[0].children[1].children[2];
-
-    // if(selectedKeys.length>0)
-    // {
-    //   if(selectedKeys.f)
-    // }
+   
   };
 
   const onHistoryItemClicked = historyItem => {
     setDisplayList(historyItem.dispalyList.slice());
 
-    setClickedItem(historyItem);
+    
     let lastHistory = historyItems;
-    let pIndex = findIndexByKey(lastHistory, historyItem.key);
-
-    //let pItem = lastHistory[pIndex];
+    let pIndex = findIndexByKey(lastHistory, historyItem.key);   
 
     lastHistory.length = pIndex;
-    console.log("history");
-    console.log(lastHistory);
+   
     setHistoryItems(lastHistory);
   };
 
-  const findIndexByKey = (data, key) => {
-    //let index = 0;
-    // for (index = 0; index < data.length; index++) {
-    //   if (data[index].key == key) {
-    //     return index;
-    //   }
-    // }
-    return data.findIndex(x => x.key == key);
-  };
+  const findIndexByKey = (data, key) => {    
+    return data.findIndex(x => x.key === key);
+  };  
 
-  const search = (data, key, selected) => {
-    searchItem(data, key, selected);
-  };
-
-  const searchItem = (arr, key, selected) => {
-    arr.forEach(obj => {
-      if (obj.key === key) {
-        obj.selected = selected;
-      }
-      if (obj.children !== undefined) searchItem(obj.children, key, selected);
-    });
-  };
-
-  const renderItems1 = () => {
-    console.log("render1");
+  
+  const renderItems = () => {    
     return (
       <div>
         {(searchValue === undefined || searchValue === "") && renderDataItems()}
@@ -206,14 +160,9 @@ export function PickerCascader(props) {
     );
   };
 
-  const renderSearchItems = () => {
-    console.log("render search");
-    if (searchValue === undefined) return null;
-    console.log(searchValue);
-    console.log(searchData);
-    console.log(filterData);
-    const searcItems = filterData.map((item, i) => {
-      console.log(i);
+  const renderSearchItems = () => {    
+    if (searchValue === undefined) return null;   
+    const searcItems = filterData.map((item, i) => {      
       return (
         <div className="rc-list-card" style={{ display: "flex" }}>
           <div
@@ -234,8 +183,7 @@ export function PickerCascader(props) {
 
   const renderDataItems = () => {
     if (displayList === undefined || displayList.length === 0) return null;
-    const listItems = displayList.map((item, i) => {
-      console.log(i);
+    const listItems = displayList.map((item, i) => {      
       return (
         <div className="rc-list-card" style={{ display: "flex" }}>
           <div
@@ -284,10 +232,8 @@ export function PickerCascader(props) {
 
   useEffect(() => {
     let td = [];
-    createSearchData(td, props.data, "", "");
-    setTransformData(td.slice());
-    setSearchData(td.slice());
-    console.log(td);
+    createSearchData(td, props.data, "", "");    
+    setSearchData(td.slice());    
   }, []);
 
   const onSearchItemClicked = item => {
@@ -301,20 +247,16 @@ export function PickerCascader(props) {
     }
   };
 
-  const handleSearch = event => {
-    //console.log("A name was submitted: " + event);
-    //console.log(event);
+  const handleSearch = event => {    
     let searchString = event.target.value;
-    setSearchValue(searchString);
-    console.log(searchValue);
+    setSearchValue(searchString);    
     event.preventDefault();
     let sd = searchData.slice();
     sd = sd.filter(arr => {
       return arr.text.toLowerCase().includes(searchString.toLowerCase());
     });
 
-    setFilterData(sd);
-    console.log(sd);
+    setFilterData(sd);    
   };
 
   return (
@@ -325,8 +267,7 @@ export function PickerCascader(props) {
           {showList ? <FaCaretUp /> : <FaCaretDown />}
         </span>
       </div>
-      <div>
-        <div></div>
+      <div style={styles.listWrapper}>       
         {showList && (
           <div style={styles.list}>
             <div style={styles.searchContainer}>
@@ -340,7 +281,7 @@ export function PickerCascader(props) {
                   onChange={evt => handleSearch(evt)}
                 />              
             </div>
-            {renderItems1(displayList)}
+            {renderItems(displayList)}
           </div>
         )}
       </div>

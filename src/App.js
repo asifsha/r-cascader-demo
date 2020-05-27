@@ -14,7 +14,10 @@ function App() {
   return (
     
     <div>
-      <div style={{float:'left'}}>Select City : </div>
+      <div>Cities</div>
+      <div>Cities</div>
+      <div>Cities</div>
+      <div style={{float:'left', paddingRight : '1rem'}}>Select City : </div>
       <div style={{display:'inline'}}><PickerCascader
        style={{width:'15rem'}}
         placeHolder="City"
