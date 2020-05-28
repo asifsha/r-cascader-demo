@@ -1,43 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FaCaretDown, FaCaretRight, FaCaretUp, FaSearch } from "react-icons/fa";
 
-export function PickerCascader(props) {
-  const styles = {
-    listWrapper: {
-      position: "relative"
-    },
+import "./pickerCascader.css";
 
-    list: {
-      border: "1px grey solid",
-      display: "flex",
-      zIndex: 10,
-      position: "absolute",
-      flexDirection: "column",
-      width: props.style.width
-    },
-    historyList: {
-      verticalAlign: "middle",
-      fontSize: "x-small"
-    },
-    searchContainer: {
-      marginBottom: "1rem"
-    },
-    icon: {
-      padding: "0.5rem",
-      minWidth: "2rem",
-      position: "absolute",
-      color: "grey"
-    },
-    searchField: {
-      width: "calc(100% - 2.8rem)",
-      padding: "0.5rem",
-      paddingLeft: "2rem"
-    },
-    dropdownIcon: {
-      verticalAlign: "middle",
-      float: "right"
-    }
-  };
+export function PickerCascader(props) {
+  
 
   const [showList, setShowList] = useState(false);
 
@@ -156,7 +123,7 @@ export function PickerCascader(props) {
     if (searchValue === undefined) return null;
     const searcItems = filterData.map((item, i) => {
       return (
-        <div className="rc-list-card" style={{ display: "flex" }} key={i}>
+        <div className="pc-list-card" style={{ display: "flex" }} key={i}>
           <div
             key={i}
             value={item.key}
@@ -177,7 +144,7 @@ export function PickerCascader(props) {
     if (displayList === undefined || displayList.length === 0) return null;
     const listItems = displayList.map((item, i) => {
       return (
-        <div className="rc-list-card" style={{ display: "flex" }} key={i}>
+        <div className="pc-list-card" style={{ display: "flex" }} key={i}>
           <div
             key={i}
             value={item.key}
@@ -208,7 +175,7 @@ export function PickerCascader(props) {
             <div
               key={i}
               value={item.key}
-              style={styles.historyList}
+              className="pc-history-list"
               onClick={() => {
                 onHistoryItemClicked(item);
               }}
@@ -253,21 +220,21 @@ export function PickerCascader(props) {
 
   return (
     <div style={props.style}>
-      <div onClick={() => togglePicker()}>
+      <div onClick={() => togglePicker()} style={{ color : selectedItem !== undefined ? 'black' : 'grey'}}>
         {selectedItem !== undefined ? selectedItem.text : props.placeHolder}
-        <span style={styles.dropdownIcon}>
+        <span className="pc-dropdown-icon">
           {showList ? <FaCaretUp /> : <FaCaretDown />}
         </span>
       </div>
-      <div style={styles.listWrapper}>
+      <div className="pc-list-wrapper">
         {showList && (
-          <div style={styles.list}>
-            <div style={styles.searchContainer}>
-              <div style={styles.icon}>
+          <div className="pc-list" style={{width:props.style.width}}>
+            <div className="pc-search-container">
+              <div className="pc-icon">
                 <FaSearch />{" "}
               </div>
               <input
-                style={styles.searchField}
+                className="pc-search-field"
                 type="text"
                 value={searchValue}
                 onChange={evt => handleSearch(evt)}

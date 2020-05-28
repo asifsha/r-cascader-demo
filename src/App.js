@@ -13,12 +13,12 @@ function App() {
 
   return (
     
-    <div style={{padding:'2rem'}}>
-      <div>Cities</div>      
-      <div style={{float:'left', paddingRight : '1rem'}}>Select City : </div>
-      <div style={{display:'inline'}}><PickerCascader
+    <div style={{padding:'2rem' ,display : 'flex'}}>
+      
+      <div style={{paddingRight : '1rem'}}>Select City : </div>
+      <div style={{}}><PickerCascader
        style={{width:'15rem'}}
-        placeHolder="City"
+        placeHolder={'City'}
         data={[
           {
             key: "1",
