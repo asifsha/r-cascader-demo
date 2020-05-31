@@ -31,26 +31,7 @@ export function PickerCascader(props) {
     }
     setIsPickerOpen(!isPickerOpen);
     setShowList(!showList);
-  };
-
-  const createSearchData = (searchData, data, key, text) => {
-    let index = 0;
-    for (index = 0; index < data.length; index++) {
-      let d = data[index];
-      if (d.children !== undefined)
-        createSearchData(
-          searchData,
-          d.children,
-          key + d.key + "~",
-          text + d.text + " | "
-        );
-      else {
-        let k = key + d.key;
-        let t = text + d.text;
-        searchData.push({ key: k, text: t });
-      }
-    }
-  };
+  };  
 
   const onItemClicked = item => {
     if (
@@ -188,6 +169,25 @@ export function PickerCascader(props) {
   };
 
   useEffect(() => {
+    const createSearchData = (searchData, data, key, text) => {
+      let index = 0;
+      for (index = 0; index < data.length; index++) {
+        let d = data[index];
+        if (d.children !== undefined)
+          createSearchData(
+            searchData,
+            d.children,
+            key + d.key + "~",
+            text + d.text + " | "
+          );
+        else {
+          let k = key + d.key;
+          let t = text + d.text;
+          searchData.push({ key: k, text: t });
+        }
+      }
+    };
+    
     let td = [];
     createSearchData(td, props.data, "", "");
     setSearchData(td.slice());
