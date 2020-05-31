@@ -4,8 +4,6 @@ import { FaCaretDown, FaCaretRight, FaCaretUp, FaSearch } from "react-icons/fa";
 import "./pickerCascader.css";
 
 export function PickerCascader(props) {
-  
-
   const [showList, setShowList] = useState(false);
 
   const [displayList, setDisplayList] = useState(props.data);
@@ -220,7 +218,11 @@ export function PickerCascader(props) {
 
   return (
     <div style={props.style}>
-      <div onClick={() => togglePicker()} style={{ color : selectedItem !== undefined ? 'black' : 'grey'}}>
+      <div
+        className="pc-text-panel"
+        onClick={() => togglePicker()}
+        style={{ color: selectedItem !== undefined ? "black" : "grey" }}
+      >
         {selectedItem !== undefined ? selectedItem.text : props.placeHolder}
         <span className="pc-dropdown-icon">
           {showList ? <FaCaretUp /> : <FaCaretDown />}
@@ -228,12 +230,13 @@ export function PickerCascader(props) {
       </div>
       <div className="pc-list-wrapper">
         {showList && (
-          <div className="pc-list" style={{width:props.style.width}}>
+          <div className="pc-list" style={{ width: props.style.width }}>
             <div className="pc-search-container">
               <div className="pc-icon">
                 <FaSearch />{" "}
               </div>
               <input
+                data-testid={"pc-search-field"}
                 className="pc-search-field"
                 type="text"
                 value={searchValue}
