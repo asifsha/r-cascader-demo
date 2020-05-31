@@ -1,6 +1,6 @@
 
   .pc-list-wrapper {
-    position: relative
+    position: relative;    
   }
 
   .pc-list {
@@ -10,6 +10,7 @@
     position: absolute;
     flex-direction: column;
     padding: 0.25rem;    
+    background-color: white;
   }
 
   .pc-history-list {
