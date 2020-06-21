@@ -2,7 +2,8 @@ import React, { useState } from "react";
 
 import "./App.css";
 
-import PickerCascader from "./components/cascader";
+
+import PickerCascader  from "r-picker-cascader";
 
 function App() {
   const [city, setCity] = useState({});
